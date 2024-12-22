@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Catálogo de Productos</h1>
+        <nav>
+            <a href="{% url 'home' %}">Inicio</a>
+            <a href="{% url 'catalogo' %}">Catálogo</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <form method="get">
+            <label for="categoria">Filtrar por Categoría:</label>
+            <select name="categoria" id="categoria" onchange="this.form.submit()">
+                <option value="">Todas</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                        {{ categoria.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+        
+        <div>
+            {% for producto in productos %}
+                <div>
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="200">
+                    {% endif %}
+                    <h2>{{ producto.nombre }}</h2>
+                    <p>{{ producto.descripcion }}</p>
+                    <p><strong>Precio: ${{ producto.precio }}</strong></p>
+                </div>
+            {% empty %}
+                <p>No hay productos disponibles en este momento.</p>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Glam. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

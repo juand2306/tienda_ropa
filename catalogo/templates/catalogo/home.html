@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Glam</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>¡Bienvenidos a Glam!</h1>
+        <nav>
+            <a href="#">Inicio</a>
+            <a href="#">Catálogo</a>
+            <a href="#">Sobre Nosotros</a>
+            <a href="#">Contacto</a>
+
+            {% if user.is_authenticated %}
+                <p>Hola, {{ user.username }} | <a href="{% url 'logout' %}">Cerrar Sesión</a></p>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar Sesión</a>
+                <a href="{% url 'registro' %}">Registrarse</a>
+            {% endif %}
+
+            {% comment %} {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %} {% endcomment %}
+        </nav>
+    </header>
+    <main>
+        <h2>Nuestros productos más destacados</h2>
+        <p>Aquí podrás ver la mejor selección de ropa.</p>
+    </main>
+    <footer>
+        <p>© 2024 Glam. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

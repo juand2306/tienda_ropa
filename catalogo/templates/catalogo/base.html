@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Glam{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <h1>{% block header %}Glam{% endblock %}</h1>
+        <nav>
+            <a href="{% url 'home' %}">Inicio</a>
+            <a href="{% url 'catalogo' %}">Catálogo</a>
+            
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    <a href="{% url 'lista_productos' %}">Administrar Productos</a>
+                    <a href="{% url 'agregar_producto' %}">Agregar Producto</a>
+                {% endif %}
+                <p>Hola, {{ user.username }} | <a href="{% url 'logout' %}">Cerrar Sesión</a></p>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar Sesión</a>
+                <a href="{% url 'registro' %}">Registrarse</a>
+            {% endif %}
+        </nav>
+        
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© {% now "Y" %} Glam. Todos los derechos reservados.</p>
+    </footer>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
