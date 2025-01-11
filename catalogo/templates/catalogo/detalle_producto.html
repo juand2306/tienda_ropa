@@ -1,0 +1,61 @@
+{% extends 'catalogo/base.html' %}
+
+{% block title %}{{ producto.nombre }} - Glam{% endblock %}
+
+{% block content %}
+<div class="producto-detalle">
+    <div class="producto-grid">
+        <div class="producto-imagen">
+            {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+            {% endif %}
+        </div>
+        
+        <div class="producto-info">
+            <h1 class="producto-titulo">{{ producto.nombre }}</h1>
+            
+            <div class="producto-categoria">
+                {% if producto.categoria %}
+                    <span class="categoria-tag">{{ producto.categoria.nombre }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="producto-precio">
+                <span class="precio-actual">${{ producto.precio }}</span>
+            </div>
+            
+            <div class="producto-descripcion">
+                <h2>Descripción</h2>
+                <p>{{ producto.descripcion }}</p>
+            </div>
+            
+            <div class="producto-metadata">
+                <p class="fecha">Publicado: {{ producto.fecha_creacion|date:"d/m/Y" }}</p>
+                {% if producto.fecha_actualizacion != producto.fecha_creacion %}
+                    <p class="fecha">Actualizado: {{ producto.fecha_actualizacion|date:"d/m/Y" }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if productos_relacionados %}
+    <div class="productos-relacionados">
+        <h2>Productos Relacionados</h2>
+        <div class="productos-grid">
+            {% for prod_rel in productos_relacionados %}
+            <div class="producto-card">
+                {% if prod_rel.imagen %}
+                    <a href="{% url 'catalogo:detalle_producto' prod_rel.id %}">
+                        <img src="{{ prod_rel.imagen.url }}" alt="{{ prod_rel.nombre }}">
+                    </a>
+                {% endif %}
+                <h3>{{ prod_rel.nombre }}</h3>
+                <p class="precio">${{ prod_rel.precio }}</p>
+                <a href="{% url 'catalogo:detalle_producto' prod_rel.id %}" class="btn-secundario">Ver detalles</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NO AUTORIZADO</title>
-</head>
-<body>
-    <h2>Acceso Restringido</h2>
-    <p>No tienes permisos para acceder a esta página.</p>
-    <a href="{% url 'login' %}">Volver al login</a>
-</body>
-</html>
+{% extends 'catalogo/base.html' %}
+
+{% block title %}Glam - Acceso Denegado{% endblock %}
+
+{% block content %}
+    <div class="error-container">
+        <h2>Acceso Restringido</h2>
+        <p>No tienes permisos para acceder a esta página.</p>
+        <div class="error-actions">
+            <a href="{% url 'home' %}" class="btn-primary">Volver al Inicio</a>
+            <a href="{% url 'login' %}" class="btn-secondary">Iniciar Sesión</a>
+        </div>
+    </div>
+{% endblock %}

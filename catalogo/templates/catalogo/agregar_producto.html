@@ -1,27 +1,32 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Agregar Producto</title>
-</head>
-<body>
-   <h2>Agregar Producto</h2>
-   <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="nombre">Nombre del Producto:</label>
-    <input type="text" id="nombre" name="nombre" required><br>
+{% extends 'catalogo/base.html' %}
 
-    <label for="descripcion">Descripción:</label>
-    <textarea id="descripcion" name="descripcion" required></textarea><br>
+{% block title %}Glam - Agregar Producto{% endblock %}
 
-    <label for="precio">Precio:</label>
-    <input type="number" id="precio" name="precio" step="0.01" required><br>
-
-    <label for="imagen">Imagen del Producto:</label>
-    <input type="file" id="imagen" name="imagen" accept="image/*" required><br>
-
-    <button type="submit">Agregar Producto</button>
-</form>
-</body>
-</html>
+{% block content %}
+    <div class="form-container">
+        <h2>Agregar Nuevo Producto</h2>
+        <form method="post" enctype="multipart/form-data" class="product-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="error-message">
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Guardar Producto</button>
+                <a href="{% url 'catalogo:lista_productos' %}" class="btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

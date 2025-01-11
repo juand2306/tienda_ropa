@@ -12,18 +12,18 @@
     <header>
         <h1>{% block header %}Glam{% endblock %}</h1>
         <nav>
-            <a href="{% url 'home' %}">Inicio</a>
-            <a href="{% url 'catalogo' %}">Catálogo</a>
+            <a href="{% url 'catalogo:home' %}">Inicio</a>
+            <a href="{% url 'catalogo:catalogo' %}">Catálogo</a>
             
             {% if user.is_authenticated %}
                 {% if user.is_staff %}
-                    <a href="{% url 'lista_productos' %}">Administrar Productos</a>
-                    <a href="{% url 'agregar_producto' %}">Agregar Producto</a>
+                    <a href="{% url 'catalogo:lista_productos' %}">Administrar Productos</a>
+                    <a href="{% url 'catalogo:lista_categorias' %}">Administrar Categorias</a>
                 {% endif %}
-                <p>Hola, {{ user.username }} | <a href="{% url 'logout' %}">Cerrar Sesión</a></p>
+                <p>Hola, {{ user.username }} | <a href="{% url 'catalogo:logout' %}">Cerrar Sesión</a></p>
             {% else %}
-                <a href="{% url 'login' %}">Iniciar Sesión</a>
-                <a href="{% url 'registro' %}">Registrarse</a>
+                <a href="{% url 'catalogo:login' %}">Iniciar Sesión</a>
+                <a href="{% url 'catalogo:registro' %}">Registrarse</a>
             {% endif %}
         </nav>
         

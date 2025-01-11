@@ -1,53 +1,55 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-    <header>
-        <h1>Catálogo de Productos</h1>
-        <nav>
-            <a href="{% url 'home' %}">Inicio</a>
-            <a href="{% url 'catalogo' %}">Catálogo</a>
-        </nav>
-    </header>
+{% extends 'catalogo/base.html' %}
 
-    <main>
+{% block title %}Glam - Catálogo{% endblock %}
 
-        <form method="get">
-            <label for="categoria">Filtrar por Categoría:</label>
-            <select name="categoria" id="categoria" onchange="this.form.submit()">
-                <option value="">Todas</option>
-                {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
-                        {{ categoria.nombre }}
-                    </option>
-                {% endfor %}
-            </select>
-        </form>
-        
-        <div>
+{% block content %}
+    <div class="catalog-container">
+        <div class="filters">
+            <form method="get" class="search-form">
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar productos...">
+                <select name="categoria" onchange="this.form.submit()">
+                    <option value="">Todas las categorías</option>
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}" {% if categoria.id|stringformat:"s" == current_categoria %}selected{% endif %}>
+                            {{ categoria.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+
+        <div class="products-grid">
             {% for producto in productos %}
-                <div>
+                <div class="product-card">
                     {% if producto.imagen %}
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="200">
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
                     {% endif %}
-                    <h2>{{ producto.nombre }}</h2>
-                    <p>{{ producto.descripcion }}</p>
-                    <p><strong>Precio: ${{ producto.precio }}</strong></p>
+                    <h3>{{ producto.nombre }}</h3>
+                    <p class="description">{{ producto.descripcion|truncatewords:20 }}</p>
+                    <p class="price">${{ producto.precio }}</p>
                 </div>
             {% empty %}
-                <p>No hay productos disponibles en este momento.</p>
+                <p class="no-results">No hay productos disponibles con los filtros seleccionados.</p>
             {% endfor %}
         </div>
-    </main>
 
-    <footer>
-        <p>© 2024 Glam. Todos los derechos reservados.</p>
-    </footer>
-</body>
-</html>
+        {% if productos.has_other_pages %}
+            <div class="pagination">
+                {% if productos.has_previous %}
+                    <a href="?page=1">&laquo; Primera</a>
+                    <a href="?page={{ productos.previous_page_number }}">Anterior</a>
+                {% endif %}
+
+                <span class="current">
+                    Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+                </span>
+
+                {% if productos.has_next %}
+                    <a href="?page={{ productos.next_page_number }}">Siguiente</a>
+                    <a href="?page={{ productos.paginator.num_pages }}">Última &raquo;</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

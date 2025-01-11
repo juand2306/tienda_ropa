@@ -1,24 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de productos</title>
-</head>
-<body>
-    <h1>Lista de Productos</h1>
-<div class="productos">
-    {% for producto in list_productos %}
-    <div class="producto">
-        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="150">
-        <h2>{{ producto.nombre }}</h2>
-        <p>Precio: ${{ producto.precio }}</p>
-        <p>Descripcion: {{ producto.descripcion }}</p>
-        <p>Fecha de Creación: {{ producto.fecha_creacion|date:"d M Y" }}</p>
-        <a href="{% url 'editar_producto' producto.id %}">Editar</a>
-        <a href="{% url 'eliminar_producto' producto.id %}">Eliminar</a>
+{% extends 'catalogo/base.html' %}
+
+{% block title %}Glam - Administrar Productos{% endblock %}
+
+{% block content %}
+    <div class="admin-container">
+        <div class="admin-header">
+            <h2>Administración de Productos</h2>
+            <a href="{% url 'catalogo:agregar_producto' %}" class="btn-primary">Agregar Nuevo Producto</a>
+        </div>
+
+        <div class="filters">
+            <form method="get" class="search-form">
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar productos...">
+                <select name="estado">
+                    <option value="">Todos los estados</option>
+                    <option value="activo" {% if estado == 'activo' %}selected{% endif %}>Activos</option>
+                    <option value="inactivo" {% if estado == 'inactivo' %}selected{% endif %}>Inactivos</option>
+                </select>
+                <button type="submit">Filtrar</button>
+            </form>
+        </div>
+
+        <div class="products-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td>
+                                {% if producto.imagen %}
+                                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="50">
+                                {% endif %}
+                            </td>
+                            <td>{{ producto.nombre }}</td>
+                            <td>{{ producto.categoria.nombre|default:"Sin categoría" }}</td>
+                            <td>${{ producto.precio }}</td>
+                            <td>{{ producto.activo|yesno:"Activo,Inactivo" }}</td>
+                            <td class="actions">
+                                <a href="{% url 'catalogo:editar_producto' producto.id %}" class="btn-edit">Editar</a>
+                                <a href="{% url 'catalogo:eliminar_producto' producto.id %}" class="btn-delete">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">No hay productos disponibles.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if productos.has_other_pages %}
+            <div class="pagination">
+                {% if productos.has_previous %}
+                    <a href="?page=1">&laquo; Primera</a>
+                    <a href="?page={{ productos.previous_page_number }}">Anterior</a>
+                {% endif %}
+
+                <span class="current">
+                    Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+                </span>
+
+                {% if productos.has_next %}
+                    <a href="?page={{ productos.next_page_number }}">Siguiente</a>
+                    <a href="?page={{ productos.paginator.num_pages }}">Última &raquo;</a>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
-    {% endfor %}
-</div>
-</body>
-</html>
+{% endblock %}

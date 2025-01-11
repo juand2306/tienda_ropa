@@ -1,17 +1,30 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registro</title>
-</head>
-<body>
-    <h1>Registro de Usuario</h1>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Registrarse</button>
-    </form>
-    <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
-</body>
-</html>
+{% extends 'catalogo/base.html' %}
+
+{% block title %}Glam - Registro{% endblock %}
+
+{% block content %}
+    <div class="auth-container">
+        <h2>Registro de Usuario</h2>
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="error-message">
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn-primary">Registrarse</button>
+        </form>
+        <p class="auth-links">¿Ya tienes una cuenta? <a href="{% url 'catalogo:login' %}">Inicia sesión</a></p>
+    </div>
+{% endblock %}

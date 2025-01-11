@@ -1,17 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eliminar producto</title>
-</head>
-<body>
-    <h1>Eliminar Producto</h1>
-    <p>¿Estás seguro que deseas eliminar "{{ producto.nombre }}"?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Sí, eliminar</button>
-        <a href="{% url 'catalogo' %}">Cancelar</a>
-    </form> 
-</body>
-</html>
+{% extends 'catalogo/base.html' %}
+
+{% block title %}Glam - Eliminar Producto{% endblock %}
+
+{% block content %}
+    <div class="delete-confirmation">
+        <h2>Eliminar Producto</h2>
+        <div class="product-info">
+            {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="100">
+            {% endif %}
+            <p>¿Estás seguro que deseas eliminar el producto "{{ producto.nombre }}"?</p>
+            <p class="warning">Esta acción no se puede deshacer.</p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn-danger">Sí, eliminar</button>
+                <a href="{% url 'catalogo:lista_productos' %}" class="btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
