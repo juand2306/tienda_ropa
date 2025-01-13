@@ -3,12 +3,12 @@
 {% block title %}Glam - Agregar Categoría{% endblock %}
 
 {% block content %}
-    <div class="form-container">
+    <div class="form-container category-container">
         <h2>Agregar Nueva Categoría</h2>
         <form method="post" class="category-form">
             {% csrf_token %}
             {% for field in form %}
-                <div class="form-group">
+                <div class="form-group {% if field.field.required %}required{% endif %}">
                     {{ field.label_tag }}
                     {{ field }}
                     {% if field.errors %}

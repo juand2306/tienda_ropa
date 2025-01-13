@@ -3,9 +3,9 @@
 {% block title %}Glam - Editar Producto{% endblock %}
 
 {% block content %}
-    <div class="form-container">
-        <h2>Editar Producto: {{ producto.nombre }}</h2>
-        <form method="post" enctype="multipart/form-data" class="product-form">
+    <div class="form-container edit-mode">
+        <h2>Editar Producto: <span>{{ producto.nombre }}</span></h2>
+        <form method="post" enctype="multipart/form-data" class="product-form edit-mode">   
             {% csrf_token %}
             {% for field in form %}
                 <div class="form-group">
@@ -23,7 +23,7 @@
                     {% endif %}
                 </div>
             {% endfor %}
-            <div class="form-actions">
+            <div class="form-actions edit-mode">
                 <button type="submit" class="btn-primary">Guardar Cambios</button>
                 <a href="{% url 'catalogo:lista_productos' %}" class="btn-secondary">Cancelar</a>
             </div>

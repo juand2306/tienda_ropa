@@ -6,7 +6,7 @@
     <div class="admin-container">
         <div class="admin-header">
             <h2>Administración de Categorías</h2>
-            <a href="{% url 'catalogo:agregar_categoria' %}" class="btn-primary">Agregar Nueva Categoría</a>
+            <a href="{% url 'catalogo:agregar_categoria' %}" class="btn-primary">+ Agregar Nueva Categoría</a>
         </div>
 
         <div class="categories-table">
@@ -25,18 +25,24 @@
                         <tr>
                             <td>{{ categoria.nombre }}</td>
                             <td>{{ categoria.descripcion|truncatewords:20|default:"Sin descripción" }}</td>
-                            <td>{{ categoria.activa|yesno:"Activa,Inactiva" }}</td>
-                            <td>{{ categoria.productos.count }}</td>
+                            <td>
+                                <span class="category-status {% if categoria.activa %}status-active{% else %}status-inactive{% endif %}">
+                                    {{ categoria.activa|yesno:"Activa,Inactiva" }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="product-count">{{ categoria.productos.count }}</span>
+                            </td>
                             <td class="actions">
                                 <a href="{% url 'catalogo:editar_categoria' categoria.id %}" class="btn-edit">Editar</a>
-                                <form method="post" action="{% url 'catalogo:eliminar_categoria' categoria.id %}" class="delete-form" style="display: inline;">
+                                <form method="post" action="{% url 'catalogo:eliminar_categoria' categoria.id %}" class="delete-form">
                                     {% csrf_token %}
                                     <button type="submit" class="btn-delete" onclick="return confirm('¿Estás seguro de eliminar esta categoría?')">Eliminar</button>
                                 </form>
                             </td>
                         </tr>
                     {% empty %}
-                        <tr>
+                        <tr class="empty-state">
                             <td colspan="5">No hay categorías disponibles.</td>
                         </tr>
                     {% endfor %}

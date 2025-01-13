@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
 from django.urls import reverse
 from .models import Producto, Categoria
 from .forms import RegistroForm, ProductoForm, CategoriaForm
@@ -13,7 +12,8 @@ from .forms import RegistroForm, ProductoForm, CategoriaForm
 def is_admin(user):
     return user.is_staff
 
-# Vistas públicas
+#VISTAS PRINCIPALES 
+
 def home(request):
     productos_destacados = Producto.objects.filter(
         activo=True
@@ -67,21 +67,7 @@ def catalogo(request):
     
     return render(request, 'catalogo/catalogo.html', context)
 
-def detalle_producto(request, producto_id):
-    producto = get_object_or_404(Producto.objects.select_related('categoria'), 
-                                id=producto_id, activo=True)
-    
-    productos_relacionados = Producto.objects.filter(
-        categoria=producto.categoria,
-        activo=True
-    ).exclude(id=producto.id)[:4]
-    
-    return render(request, 'catalogo/detalle_producto.html', {
-        'producto': producto,
-        'productos_relacionados': productos_relacionados
-    })
-
-# Autenticación
+#----------------------- Autenticación / Registro -------------------------------------------------------------
 def registro(request):
     if request.user.is_authenticated:
         return redirect('catalogo:home')
@@ -122,6 +108,22 @@ def cerrar_sesion(request):
     logout(request)
     messages.success(request, 'Has cerrado sesión correctamente.')
     return redirect('catalogo:home')
+
+#--------------------- PRODUCTOS ----------------------
+def detalle_producto(request, producto_id):
+    producto = get_object_or_404(Producto.objects.select_related('categoria'), 
+                                id=producto_id, activo=True)
+    
+    productos_relacionados = Producto.objects.filter(
+        categoria=producto.categoria,
+        activo=True
+    ).exclude(id=producto.id)[:4]
+    
+    return render(request, 'catalogo/detalle_producto.html', {
+        'producto': producto,
+        'productos_relacionados': productos_relacionados
+    })
+
 
 # Administración de productos
 @user_passes_test(is_admin, login_url='catalogo:no_autorizado')
@@ -201,7 +203,6 @@ def editar_producto(request, producto_id):
     })
 
 @user_passes_test(is_admin, login_url='catalogo:no_autorizado')
-@require_POST
 def eliminar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     nombre = producto.nombre
@@ -213,7 +214,7 @@ def eliminar_producto(request, producto_id):
         messages.error(request, f'Error al eliminar el producto: {str(e)}')
     
     return redirect('catalogo:lista_productos')
-
+#------------------------------- CATEGORIAS --------------------------------------------------
 # Administración de categorías
 @user_passes_test(is_admin, login_url='catalogo:no_autorizado')
 def lista_categorias(request):
@@ -252,7 +253,6 @@ def editar_categoria(request, categoria_id):
     })
 
 @user_passes_test(is_admin, login_url='catalogo:no_autorizado')
-@require_POST
 def eliminar_categoria(request, categoria_id):
     categoria = get_object_or_404(Categoria, id=categoria_id)
     nombre = categoria.nombre

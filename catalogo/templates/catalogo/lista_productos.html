@@ -6,18 +6,25 @@
     <div class="admin-container">
         <div class="admin-header">
             <h2>Administración de Productos</h2>
-            <a href="{% url 'catalogo:agregar_producto' %}" class="btn-primary">Agregar Nuevo Producto</a>
+            <a href="{% url 'catalogo:agregar_producto' %}" class="btn-primary">+ Agregar Nuevo Producto</a>
         </div>
 
-        <div class="filters">
+        <div class="search-container">
             <form method="get" class="search-form">
-                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar productos...">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query|default:'' }}" 
+                    placeholder="Buscar por nombre, categoría o precio..."
+                >
                 <select name="estado">
-                    <option value="">Todos los estados</option>
+                    <option value="">Estado del producto</option>
                     <option value="activo" {% if estado == 'activo' %}selected{% endif %}>Activos</option>
                     <option value="inactivo" {% if estado == 'inactivo' %}selected{% endif %}>Inactivos</option>
                 </select>
-                <button type="submit">Filtrar</button>
+                <button type="submit">
+                    Buscar
+                </button>
             </form>
         </div>
 
@@ -38,13 +45,21 @@
                         <tr>
                             <td>
                                 {% if producto.imagen %}
-                                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="50">
+                                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
                                 {% endif %}
                             </td>
                             <td>{{ producto.nombre }}</td>
-                            <td>{{ producto.categoria.nombre|default:"Sin categoría" }}</td>
+                            <td>
+                                <span class="categoria-tag">
+                                    {{ producto.categoria.nombre|default:"Sin categoría" }}
+                                </span>
+                            </td>
                             <td>${{ producto.precio }}</td>
-                            <td>{{ producto.activo|yesno:"Activo,Inactivo" }}</td>
+                            <td>
+                                <span class="status-badge {% if producto.activo %}active{% endif %}">
+                                    {{ producto.activo|yesno:"Activo,Inactivo" }}
+                                </span>
+                            </td>
                             <td class="actions">
                                 <a href="{% url 'catalogo:editar_producto' producto.id %}" class="btn-edit">Editar</a>
                                 <a href="{% url 'catalogo:eliminar_producto' producto.id %}" class="btn-delete">Eliminar</a>
@@ -52,7 +67,9 @@
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="6">No hay productos disponibles.</td>
+                            <td colspan="6" class="empty-state">
+                                No hay productos disponibles.
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
